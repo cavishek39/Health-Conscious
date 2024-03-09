@@ -6,7 +6,9 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 export type FoodListItemProps = {
   item: {
     label: string
-    cal: number
+    nutrients: {
+      ENERC_KCAL: number
+    }
     brand: string
   }
 }
@@ -19,7 +21,7 @@ const FoodListItem = ({ item }: FoodListItemProps) => {
           {item.label}
         </Text>
         <Text numberOfLines={1} style={styles.subText}>
-          {item.cal} cal, {item.brand}
+          {item.nutrients.ENERC_KCAL} cal, {item.brand}
         </Text>
       </View>
       <View style={styles.circle}>

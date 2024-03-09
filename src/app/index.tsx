@@ -4,11 +4,34 @@ import { Link } from 'expo-router'
 import FoodListItem, {
   FoodListItemProps,
 } from '../components/card/FoodListItem'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { colors } from '../constants/colors'
+import { gql, useLazyQuery, useQuery } from '@apollo/client'
+import { debounce } from '../hooks/useDebounce'
+
+const GET_SEARCHED_DATA = gql`
+  query search($ingr: String) {
+    search(ingr: $ingr) {
+      hints {
+        food {
+          foodId
+          label
+          brand
+          nutrients {
+            ENERC_KCAL
+          }
+          category
+        }
+      }
+    }
+  }
+`
 
 export default function Page() {
   const [searchText, setSearchText] = useState('')
+
+  const [getSearchedData, { data: searchedData, loading: searchingData }] =
+    useLazyQuery(GET_SEARCHED_DATA)
 
   return (
     <View style={styles.container}>
@@ -19,13 +42,18 @@ export default function Page() {
         style={styles.textInputContainer}
         returnKeyType='search'
         onBlur={() => {
-          console.log('onBlur')
+          getSearchedData({
+            variables: {
+              ingr: searchText,
+            },
+          })
         }}
       />
-      <FlatList<FoodListItemProps>
-        data={foodLists}
-        renderItem={({ item }) => <FoodListItem item={item?.item} />}
-        keyExtractor={({ item }) => item.label + item.cal + item.brand}
+      {searchingData && <Text>Searching...</Text>}
+      <FlatList
+        data={searchedData?.search?.hints}
+        renderItem={({ item }) => <FoodListItem item={item?.food} />}
+        keyExtractor={(item, index) => item?.food?.foodId + index.toString()}
         contentContainerStyle={{ gap: 8 }}
       />
     </View>
@@ -48,125 +76,3 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
 })
-
-const foodLists: FoodListItemProps[] = [
-  {
-    item: {
-      label: 'Burger',
-      cal: 200,
-      brand: 'McDonalds',
-    },
-  },
-  {
-    item: {
-      label: 'Pizza',
-      cal: 300,
-      brand: 'Dominos',
-    },
-  },
-  {
-    item: {
-      label: 'Pasta',
-      cal: 400,
-      brand: 'Olive Garden',
-    },
-  },
-  {
-    item: {
-      label: 'Tacos',
-      cal: 500,
-      brand: 'Taco Bell',
-    },
-  },
-  {
-    item: {
-      label: 'Fried Chicken',
-      cal: 600,
-      brand: 'KFC',
-    },
-  },
-  {
-    item: {
-      label: 'Sushi',
-      cal: 700,
-      brand: 'Sushi Palace',
-    },
-  },
-  {
-    item: {
-      label: 'Ice Cream',
-      cal: 800,
-      brand: 'Cold Stone',
-    },
-  },
-  {
-    item: {
-      label: 'Donuts',
-      cal: 900,
-      brand: 'Dunkin Donuts',
-    },
-  },
-  {
-    item: {
-      label: 'Cupcakes',
-      cal: 1000,
-      brand: 'Georgetown Cupcake',
-    },
-  },
-  {
-    item: {
-      label: 'Pancakes',
-      cal: 1100,
-      brand: 'IHOP',
-    },
-  },
-  {
-    item: {
-      label: 'Waffles',
-      cal: 1200,
-      brand: 'Waffle House',
-    },
-  },
-  {
-    item: {
-      label: 'Bacon',
-      cal: 1300,
-      brand: 'Porky Pig',
-    },
-  },
-  {
-    item: {
-      label: 'Eggs',
-      cal: 1400,
-      brand: 'Chickens',
-    },
-  },
-  {
-    item: {
-      label: 'Steak',
-      cal: 1500,
-      brand: 'Texas Roadhouse',
-    },
-  },
-  {
-    item: {
-      label: 'Salad',
-      cal: 1600,
-      brand: 'Olive Garden',
-    },
-  },
-  {
-    item: {
-      label: 'Fruit',
-      cal: 1700,
-      brand: 'Whole Foods',
-    },
-  },
-  {
-    item: {
-      label: 'Vegetables',
-      cal: 1800,
-      brand: 'Whole Foods',
-    },
-  },
-]
