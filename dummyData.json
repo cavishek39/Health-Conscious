@@ -1,0 +1,170 @@
+{
+  "data": {
+    "myQuery": {
+      "parsed": [],
+      "text": "",
+      "hints": [
+        {
+          "food": {
+            "label": "Butter, Salted",
+            "nutrients": {
+              "ENERC_KCAL": 717
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Butter, Whipped, With Salt",
+            "nutrients": {
+              "ENERC_KCAL": 731
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Butter Oil, Anhydrous",
+            "nutrients": {
+              "ENERC_KCAL": 876
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Blue",
+            "nutrients": {
+              "ENERC_KCAL": 353
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Brick",
+            "nutrients": {
+              "ENERC_KCAL": 371
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Brie",
+            "nutrients": {
+              "ENERC_KCAL": 334
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Camembert",
+            "nutrients": {
+              "ENERC_KCAL": 300
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Caraway",
+            "nutrients": {
+              "ENERC_KCAL": 376
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cheddar (Includes Foods for USDA's Food Distribution Program)",
+            "nutrients": {
+              "ENERC_KCAL": 403
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cheshire",
+            "nutrients": {
+              "ENERC_KCAL": 387
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Colby",
+            "nutrients": {
+              "ENERC_KCAL": 394
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cottage, Creamed, Large or Small Curd",
+            "nutrients": {
+              "ENERC_KCAL": 98
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cottage, Creamed, With Fruit",
+            "nutrients": {
+              "ENERC_KCAL": 97
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cottage, Nonfat, Uncreamed, Dry, Large or Small Curd",
+            "nutrients": {
+              "ENERC_KCAL": 72
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cottage, Lowfat, 2% Milkfat",
+            "nutrients": {
+              "ENERC_KCAL": 81
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cottage, Lowfat, 1% Milkfat",
+            "nutrients": {
+              "ENERC_KCAL": 72
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Cream",
+            "nutrients": {
+              "ENERC_KCAL": 350
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Edam",
+            "nutrients": {
+              "ENERC_KCAL": 357
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Feta",
+            "nutrients": {
+              "ENERC_KCAL": 265
+            }
+          }
+        },
+        {
+          "food": {
+            "label": "Cheese, Fontina",
+            "nutrients": {
+              "ENERC_KCAL": 389
+            }
+          }
+        }
+      ]
+    }
+  }
+}
