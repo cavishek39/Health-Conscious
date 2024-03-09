@@ -25,7 +25,7 @@ const FoodListItem = ({ item }: FoodListItemProps) => {
         </Text>
       </View>
       <View style={styles.circle}>
-        <Ionicons name='add' size={24} />
+        <Ionicons name='add' size={24} color={colors.blue} />
       </View>
     </View>
   )
@@ -56,7 +56,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.lightGrey,
+    borderWidth: 1.5,
+    borderColor: colors.blue,
     alignItems: 'center',
     justifyContent: 'center',
   },
