@@ -1,11 +1,12 @@
 type Food_log {
+  brand: String
   category: String
-  categoryLabel: String
-  foodId: String
+  category_label: String
+  food_id: String
   image: String
-  knownAs: String
+  known_as: String
   label: String
-  nutrients: Nutrients
+  kcal: Int
 }
 
 """
@@ -14,7 +15,7 @@ Feel free to modify them or aggregate more.
 """
 type Query {
   " Queries for type 'Food_log' "
-  food_logByFood_id(food_id: String!): [Food_log]
+  foodLogByUserId(user_id: String!): [Food_log]
     @dbquery(
       type: "postgresql"
       schema: "public"
@@ -33,6 +34,12 @@ type Query {
       type: "postgresql"
       schema: "public"
       table: "food_log"
+      configuration: "postgresql_config"
+    )
+  getFoodByDateAndUserId(user_id: String!, created_at: DateTime!): [Food_log]
+    @dbquery(
+      type: "postgresql"
+      query: "SELECT * FROM food_log WHERE user_id = $1 AND DATE(created_at) = $2;"
       configuration: "postgresql_config"
     )
   food_logPaginatedList(first: Int, after: Int): [Food_log]
@@ -73,6 +80,7 @@ type Mutation {
     kcal: Int
     user_id: String
     created_at: DateTime
+    image: String
   ): Food_log
     @dbquery(
       type: "postgresql"

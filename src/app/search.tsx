@@ -1,9 +1,17 @@
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native'
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native'
 import { Link } from 'expo-router'
 import FoodListItem from '../components/card/FoodListItem'
 import { useState } from 'react'
 import { colors } from '../constants/colors'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
+import { MY_LOGGED_FOOD_DATA } from '.'
 
 const GET_SEARCHED_DATA = gql`
   query search($ingr: String) {
@@ -25,13 +33,29 @@ const GET_SEARCHED_DATA = gql`
 `
 
 const INSERT_FOOD = gql`
-  mutation InsertFood($label: String!, $kcal: Int!, $food_id: String!) {
-    insertFood_log(label: $label, kcal: $kcal, food_id: $food_id) {
+  mutation InsertFood(
+    $label: String!
+    $kcal: Int!
+    $food_id: String!
+    $image: String!
+    $created_at: DateTime
+  ) {
+    insertFood_log(
+      label: $label
+      kcal: $kcal
+      food_id: $food_id
+      user_id: "user1"
+      image: $image
+      created_at: $created_at
+    ) {
       food_id
-      id
-      kcal
       label
-      user_id
+      image
+      known_as
+      kcal
+      brand
+      category
+      category_label
     }
   }
 `
@@ -42,7 +66,16 @@ export default function Page() {
   const [getSearchedData, { data: searchedData, loading: searchingData }] =
     useLazyQuery(GET_SEARCHED_DATA)
 
-  const [insertFoodItem] = useMutation(INSERT_FOOD)
+  const [insertFoodItem] = useMutation(INSERT_FOOD, {
+    refetchQueries: [
+      {
+        query: MY_LOGGED_FOOD_DATA,
+        variables: {
+          userId: 'user1',
+        },
+      },
+    ],
+  })
 
   return (
     <View style={styles.container}>
@@ -72,15 +105,21 @@ export default function Page() {
                   label: item?.food?.label,
                   kcal: item?.food?.nutrients?.ENERC_KCAL,
                   food_id: item?.food?.foodId,
+                  image: item?.food?.image,
+                  created_at: new Date().toISOString(),
                 },
                 onCompleted(data) {
                   console.log(data)
+                  Alert.alert('Food added', 'Food added successfully')
+                },
+                onError(error) {
+                  console.error(error)
                 },
               })
             }}
           />
         )}
-        keyExtractor={(item, index) => item?.food?.foodId + index.toString()}
+        keyExtractor={(item, index) => item?.food?.food_id + index.toString()}
         contentContainerStyle={{ gap: 8 }}
       />
     </View>

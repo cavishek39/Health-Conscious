@@ -1,31 +1,36 @@
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native'
+import {
+  Button,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import FoodListItem from '../components/card/FoodListItem'
 import { Link } from 'expo-router'
 import { colors } from '../constants/colors'
 
-const MY_LOGGED_FOOD_DATA = gql`
-  query MyLoggedFoodList {
-    food_logList {
-      label
+export const MY_LOGGED_FOOD_DATA = gql`
+  query MyLoggedFoodList($userId: String = "user1") {
+    foodLogByUserId(user_id: $userId) {
+      brand
       category
-      categoryLabel
-      foodId
+      category_label
+      food_id
       image
-      knownAs
-      nutrients {
-        ENERC_KCAL
-      }
+      label
+      kcal
     }
   }
 `
 
 const HomeScreen = () => {
-  const { data, loading } = useQuery(MY_LOGGED_FOOD_DATA, {
-    onCompleted(data) {
-      console.log(data)
-    },
+  const { data, loading, refetch } = useQuery(MY_LOGGED_FOOD_DATA, {
+    // onCompleted(data) {
+    //   console.log('My data', data)
+    // },
   })
 
   return (
@@ -44,12 +49,15 @@ const HomeScreen = () => {
       </View>
       {loading && <Text>Loading...</Text>}
       <FlatList
-        data={data?.search?.hints}
+        data={data?.foodLogByUserId}
         renderItem={({ item }) => (
-          <FoodListItem item={item?.food} onPressAddingAnItem={() => {}} />
+          <FoodListItem item={item} onPressAddingAnItem={() => {}} />
         )}
-        keyExtractor={(item, index) => item?.food?.foodId + index.toString()}
+        keyExtractor={(item, index) => item?.food_id + index.toString()}
         contentContainerStyle={{ gap: 8 }}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={refetch} />
+        }
       />
     </View>
   )

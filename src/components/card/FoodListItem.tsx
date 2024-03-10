@@ -8,9 +8,7 @@ export type FoodListItemProps = {
   item: {
     image: string
     label: string
-    nutrients: {
-      ENERC_KCAL: number
-    }
+    kcal: number
     brand: string
   }
   onPressAddingAnItem: () => void
@@ -34,7 +32,7 @@ const FoodListItem = ({ item, onPressAddingAnItem }: FoodListItemProps) => {
           {item.label}
         </Text>
         <Text numberOfLines={1} style={styles.subText}>
-          {item.nutrients.ENERC_KCAL} cal, {item.brand}
+          {item?.kcal} cal, {item.brand}
         </Text>
       </View>
       <Pressable onPress={onPressAddingAnItem} style={styles.circle}>
