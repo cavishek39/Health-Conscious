@@ -13,8 +13,8 @@ import { Link } from 'expo-router'
 import { colors } from '../constants/colors'
 
 export const MY_LOGGED_FOOD_DATA = gql`
-  query MyLoggedFoodList($userId: String = "user1") {
-    foodLogByUserId(user_id: $userId) {
+  query MyLoggedFoodList($userId: String = "user1", $created_at: DateTime!) {
+    getFoodByDateAndUserId(created_at: $created_at, user_id: $userId) {
       brand
       category
       category_label
@@ -27,17 +27,33 @@ export const MY_LOGGED_FOOD_DATA = gql`
 `
 
 const HomeScreen = () => {
+  console.log('HomeScreen', new Date().toISOString().split('T')[0])
+
   const { data, loading, refetch } = useQuery(MY_LOGGED_FOOD_DATA, {
-    // onCompleted(data) {
-    //   console.log('My data', data)
-    // },
+    variables: {
+      created_at: new Date().toISOString().split('T')[0],
+      userId: 'user1',
+    },
+    onCompleted(data) {
+      console.log('My data', data)
+    },
+    onError(error) {
+      console.log(error)
+    },
   })
+
+  const totalCalories = data?.getFoodByDateAndUserId?.reduce(
+    (acc, curr) => acc + curr?.kcal,
+    0
+  )
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Text>Calories</Text>
-        <Text style={{ fontWeight: '600', fontSize: 16 }}>1780 cal</Text>
+        <Text style={{ fontWeight: '600', fontSize: 16 }}>
+          {totalCalories} cal
+        </Text>
       </View>
       <View style={styles.headerContainer}>
         <Text>Today's food</Text>
@@ -49,7 +65,7 @@ const HomeScreen = () => {
       </View>
       {loading && <Text>Loading...</Text>}
       <FlatList
-        data={data?.foodLogByUserId}
+        data={data?.getFoodByDateAndUserId}
         renderItem={({ item }) => (
           <FoodListItem item={item} onPressAddingAnItem={() => {}} />
         )}
