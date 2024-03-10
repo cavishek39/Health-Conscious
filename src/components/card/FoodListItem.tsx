@@ -5,11 +5,15 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { Image } from 'expo-image'
 
 export type FoodListItemProps = {
+  hideAddButton?: boolean
   item: {
     image: string
     label: string
     kcal: number
     brand: string
+    nutrients: {
+      ENERC_KCAL: number
+    }
   }
   onPressAddingAnItem: () => void
 }
@@ -17,7 +21,11 @@ export type FoodListItemProps = {
 const blurhash =
   '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj['
 
-const FoodListItem = ({ item, onPressAddingAnItem }: FoodListItemProps) => {
+const FoodListItem = ({
+  item,
+  onPressAddingAnItem,
+  hideAddButton,
+}: FoodListItemProps) => {
   return (
     <View style={styles.container}>
       <Image
@@ -32,12 +40,14 @@ const FoodListItem = ({ item, onPressAddingAnItem }: FoodListItemProps) => {
           {item.label}
         </Text>
         <Text numberOfLines={1} style={styles.subText}>
-          {item?.kcal} cal, {item.brand}
+          {item?.kcal ?? item?.nutrients?.ENERC_KCAL} cal
         </Text>
       </View>
-      <Pressable onPress={onPressAddingAnItem} style={styles.circle}>
-        <Ionicons name='add' size={24} color={colors.blue} />
-      </Pressable>
+      {!hideAddButton && (
+        <Pressable onPress={onPressAddingAnItem} style={styles.circle}>
+          <Ionicons name='add' size={24} color={colors.blue} />
+        </Pressable>
+      )}
     </View>
   )
 }

@@ -27,23 +27,21 @@ export const MY_LOGGED_FOOD_DATA = gql`
 `
 
 const HomeScreen = () => {
-  console.log('HomeScreen', new Date().toISOString().split('T')[0])
-
   const { data, loading, refetch } = useQuery(MY_LOGGED_FOOD_DATA, {
     variables: {
       created_at: new Date().toISOString().split('T')[0],
       userId: 'user1',
     },
-    onCompleted(data) {
-      console.log('My data', data)
-    },
+    // onCompleted(data) {
+    //   console.log('My data', data)
+    // },
     onError(error) {
       console.log(error)
     },
   })
 
   const totalCalories = data?.getFoodByDateAndUserId?.reduce(
-    (acc, curr) => acc + curr?.kcal,
+    (acc: number, curr) => acc + curr?.kcal,
     0
   )
 
@@ -67,7 +65,11 @@ const HomeScreen = () => {
       <FlatList
         data={data?.getFoodByDateAndUserId}
         renderItem={({ item }) => (
-          <FoodListItem item={item} onPressAddingAnItem={() => {}} />
+          <FoodListItem
+            hideAddButton
+            item={item}
+            onPressAddingAnItem={() => {}}
+          />
         )}
         keyExtractor={(item, index) => item?.food_id + index.toString()}
         contentContainerStyle={{ gap: 8 }}

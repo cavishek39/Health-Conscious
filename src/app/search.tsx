@@ -1,6 +1,7 @@
 import {
   Alert,
   FlatList,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -12,10 +13,12 @@ import { useState } from 'react'
 import { colors } from '../constants/colors'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { MY_LOGGED_FOOD_DATA } from '.'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { Camera, CameraType } from 'expo-camera'
 
 const GET_SEARCHED_DATA = gql`
-  query search($ingr: String) {
-    search(ingr: $ingr) {
+  query search($ingr: String, $upc: String) {
+    search(ingr: $ingr, upc: $upc) {
       hints {
         food {
           image
@@ -37,7 +40,7 @@ const INSERT_FOOD = gql`
     $label: String!
     $kcal: Int!
     $food_id: String!
-    $image: String!
+    $image: String
     $created_at: DateTime
   ) {
     insertFood_log(
@@ -62,6 +65,24 @@ const INSERT_FOOD = gql`
 
 export default function Page() {
   const [searchText, setSearchText] = useState('')
+  const [scannerEnabled, setScannerEnabled] = useState(false)
+
+  const [type, setType] = useState(CameraType.back)
+  const [permission, requestPermission] = Camera.useCameraPermissions()
+
+  if (!permission) {
+    requestPermission()
+  }
+
+  if (!permission?.granted) {
+    requestPermission()
+  }
+
+  function toggleCameraType() {
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    )
+  }
 
   const [getSearchedData, { data: searchedData, loading: searchingData }] =
     useLazyQuery(GET_SEARCHED_DATA)
@@ -77,22 +98,71 @@ export default function Page() {
     ],
   })
 
+  if (scannerEnabled) {
+    return (
+      <View style={styles.container}>
+        <Camera
+          style={styles.camera}
+          type={type}
+          onBarCodeScanned={(data) => {
+            console.log(data)
+            if (data.type === 'org.gs1.EAN-13') {
+              getSearchedData({
+                variables: {
+                  upc: data.data,
+                },
+                onCompleted(data) {
+                  setScannerEnabled(false)
+                },
+                onError(error) {
+                  Alert.alert('Sorry', 'No data found')
+                  // console.error(error)
+                  setScannerEnabled(false)
+                },
+              })
+            }
+          }}>
+          <View style={styles.buttonContainer}>
+            <Pressable style={styles.button} onPress={toggleCameraType}>
+              <Text style={styles.text}>Flip Camera</Text>
+            </Pressable>
+          </View>
+        </Camera>
+      </View>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <Link href={'/dashboard'}>Go to dashboard</Link>
-      <TextInput
-        placeholder='Search'
-        onChangeText={setSearchText}
-        style={styles.textInputContainer}
-        returnKeyType='search'
-        onBlur={() => {
-          getSearchedData({
-            variables: {
-              ingr: searchText,
-            },
-          })
-        }}
-      />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          // width: '100%',
+        }}>
+        <TextInput
+          placeholder='Search'
+          onChangeText={setSearchText}
+          style={styles.textInputContainer}
+          returnKeyType='search'
+          onBlur={() => {
+            getSearchedData({
+              variables: {
+                ingr: searchText,
+              },
+            })
+          }}
+        />
+        <Pressable
+          onPress={() => {
+            setScannerEnabled(true)
+          }}
+          style={{ marginHorizontal: 10 }}>
+          <Ionicons name='barcode-outline' size={26} color={colors.blue} />
+        </Pressable>
+      </View>
       {searchingData && <Text>Searching...</Text>}
       <FlatList
         data={searchedData?.search?.hints}
@@ -109,8 +179,11 @@ export default function Page() {
                   created_at: new Date().toISOString(),
                 },
                 onCompleted(data) {
-                  console.log(data)
-                  Alert.alert('Food added', 'Food added successfully')
+                  // console.log(data)
+                  Alert.alert(
+                    `${item?.food?.label} added`,
+                    `${item?.food?.label} added successfully`
+                  )
                 },
                 onError(error) {
                   console.error(error)
@@ -136,9 +209,29 @@ const styles = StyleSheet.create({
   },
   textInputContainer: {
     padding: 20,
+    flex: 1,
     backgroundColor: colors.light,
     borderRadius: 8,
-    width: '100%',
     marginVertical: 8,
+  },
+  camera: {
+    height: '100%',
+    width: '100%',
+  },
+  buttonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    margin: 64,
+  },
+  button: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'white',
   },
 })
