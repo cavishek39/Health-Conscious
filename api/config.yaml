@@ -1,5 +1,8 @@
 configurationset:
   - configuration:
+      name: postgresql_config
+      uri: postgresql://ep-winter-sea-a5f0ex29.us-east-2.aws.neon.tech/food-db?user=cavishek39&password=IS6NsFW9AnEd
+  - configuration:
       name: edamam
       app_id: 9b72ae2b
       app_key: 3b4321d40e170341a3dc48073d8cfb30
